@@ -162,3 +162,15 @@ def test_uniquify():
     assert len(lst) == 1, 'wrong number of messages got through'
     assert 'uuid' in lst[0], 'did not get a uuid'
     assert len(lst[0]['uuid']) == 36, 'not a uuid'
+
+
+def test_addkeyvalue():
+    lst = []
+    pipe = L.list_sink(lst)
+    pipe = L.add_keyvalue(pipe, 'yo', 'no')
+
+    pipe.send({'message': 'take care', 'blabla': 'blubb'})
+
+    assert len(lst) == 1, 'wrong number of messages got through'
+    assert 'yo' in lst[0], 'did not get field'
+    assert lst[0]['yo'] == 'no', 'field has not the right value'

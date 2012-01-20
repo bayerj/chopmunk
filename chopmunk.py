@@ -178,8 +178,20 @@ def deadend():
 
 @coroutine
 def uniquify(consumer):
+    """Return a consumer that adds a field uuid to each value and places a uuid
+    (randomly generated per uniquify) in it."""
     uid = str(uuid.uuid4())
     while True:
         info = (yield).copy()
         info['uuid'] = uid
+        consumer.send(info)
+
+
+@coroutine
+def add_keyvalue(consumer, key, value):
+    """Return a consumer that adds a (`key`, `value`) pair to each value passing
+    through."""
+    while True:
+        info = (yield).copy()
+        info[key] = value
         consumer.send(info)
