@@ -20,14 +20,15 @@ def aslist(item):
     return item
 
 
-def sane_to_json(item):
-    """Return a copy of item where each array is replaced with a list."""
+def replace_numpy_data(item):
+    """Return a copy of item where each numpy array/scalar is replaced with a
+    list/scalar."""
     if isinstance(item, dict):
-        item = dict((k, sane_to_json(item[k])) for k in item)
+        item = dict((k, replace_numpy_data(item[k])) for k in item)
     elif isinstance(item, list):
-        item = [sane_to_json(i) for i in item]
+        item = [replace_numpy_data(i) for i in item]
     elif isinstance(item, tuple):
-        item = tuple(sane_to_json(i) for i in item)
+        item = tuple(replace_numpy_data(i) for i in item)
     elif hasattr(item, 'tolist'):
         item = item.tolist()
 
@@ -39,7 +40,7 @@ def jsonify(consumer):
     """Return a consumer which passes values on as json string."""
     while True:
         info = (yield)
-        info = sane_to_json(info)
+        info = replace_numpy_data(info)
         consumer.send(json.dumps(info))
 
 
