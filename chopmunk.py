@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+from functools import wraps
 import json
 import uuid
 
 
 def coroutine(f):
     """Turn a generator function into a coroutine by calling .next() once."""
+    @wraps(f)
     def started(*args,**kwargs):
         cr = f(*args,**kwargs)
         cr.next()
